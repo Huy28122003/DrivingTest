@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="400dp"
+    android:layout_height="300dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Input full information"
+        android:textSize="30dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:id="@+id/title"
+        android:textColor="#4CAF50"
+        />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Tên của bạn"
+        android:textSize="25dp"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        app:layout_constraintStart_toStartOf="parent"
+        android:id="@+id/edtNameSignUp"
+        android:layout_marginTop="20dp"
+        />
+    <EditText
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Mật khẩu"
+        android:inputType="numberPassword"
+        android:textSize="25dp"
+        app:layout_constraintTop_toBottomOf="@id/edtNameSignUp"
+        app:layout_constraintStart_toStartOf="parent"
+        android:id="@+id/edtPasswordSignUp"
+        />
+
+    <Button
+        android:id="@+id/btnOkSignUp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
+        android:text="Xác nhận"
+        android:textColor="#FFFFFF"
+        android:textSize="25dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/edtPasswordSignUp" />
+
+    <Button
+        android:layout_marginTop="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hủy"
+
+        app:layout_constraintTop_toBottomOf="@id/edtPasswordSignUp"
+        app:layout_constraintStart_toEndOf="@id/btnOkSignUp"
+        android:id="@+id/btnCancelSignUp"
+        android:textColor="#FFFFFF"
+        android:textSize="25dp"
+        android:layout_marginLeft="20dp"
+        />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
