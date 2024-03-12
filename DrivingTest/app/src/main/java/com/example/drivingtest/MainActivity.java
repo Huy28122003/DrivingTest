@@ -23,16 +23,37 @@ public class MainActivity extends AppCompatActivity {
     DataBase dataBase;
 
     private ArrayList<User> users;
+    private ArrayList<Question> questions;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         users = new ArrayList<>();
+        questions = new ArrayList<>();
 
         dataBase = new DataBase(this, "user.sqlite", null, 1);
-        String createDB = "create table if not exists users (id integer primary key autoincrement, name varchar(20), password pass(8))";
-        dataBase.QuerySetData(createDB);
+
+        String createTBUser = "create table if not exists users (id integer primary key autoincrement, name varchar(20), password pass(8))";
+        dataBase.QuerySetData(createTBUser);
+
+        String createTableQues = "create table if not exists questions (id integer primary key autoincrement, question varchar(200) not null, ideaA varchar(200) not null, ideaB varchar(200) not null, ideaC varchar(200) not null, ideaD varchar(200) not null, answer integer not null)";
+        dataBase.QuerySetData(createTableQues);
+
+//        String insertData = "insert into questions values " +
+//                "(null, 'Biển báo nào dưới đây chỉ dẫn cho người lái xe phải giảm tốc độ?', 'Biển báo giới hạn tốc độ', 'Biển báo cấm vượt', 'Biển báo nguy hiểm', 'Biển báo chỉ dẫn hướng', 1)," +
+//                "(null, 'Khi lái xe trên đường cao tốc, người lái xe phải giữ khoảng cách an toàn với xe phía trước ít nhất là bao nhiêu mét?', '50 mét', '100 mét', '150 mét', '200 mét', 2)," +
+//                "(null, 'Khi muốn chuyển làn đường, người lái xe phải thực hiện thao tác nào trước tiên?', 'Bật đèn xi nhan', 'Kiểm tra gương chiếu hậu', 'Nhìn trước, nhìn sau', 'Cả A, B và C', 4)," +
+//                "(null, 'Khi gặp đèn đỏ, người lái xe phải dừng xe ở đâu?', 'Trước vạch dừng', 'Sau vạch dừng', 'Trên vạch dừng', 'Bất kỳ vị trí nào trên đường', 1)," +
+//                "(null, 'Khi lái xe trong điều kiện thời tiết xấu, người lái xe nên làm gì?', 'Giảm tốc độ', 'Tăng tốc độ', 'Giữ nguyên tốc độ', 'Phanh gấp', 1)," +
+//                "(null, 'Khi gặp chướng ngại vật trên đường, người lái xe nên làm gì?', 'Phanh gấp', 'Đánh lái tránh chướng ngại vật', 'Cả A và B', 'Không làm gì cả', 3)," +
+//                "(null, 'Khi lái xe trên đường đèo, người lái xe nên làm gì?', 'Giảm tốc độ', 'Tăng tốc độ', 'Giữ nguyên tốc độ', 'Phanh gấp', 1)," +
+//                "(null, 'Khi lái xe trên đường đèo, người lái xe nên sử dụng số nào?', 'Số 1', 'Số 2', 'Số 3', 'Số 4', 1)," +
+//                "(null, 'Khi lái xe trên đường đèo, người lái xe nên chú ý điều gì?', 'Các phương tiện giao thông khác', 'Tình trạng mặt đường', 'Biển báo giao thông', 'Cả A, B và C', 4)," +
+//                "(null, 'Khi lái xe trên đường đèo, người lái xe nên làm gì khi gặp xe đi ngược chiều?', 'Bấm còi', 'Nhường đường', 'Tăng tốc độ', 'Phanh gấp', 2);";
+//        dataBase.QuerySetData(insertData);
+
+
 
         //dataBase.QuerySetData("insert into users(id,name,password) values (null,'huy','1')");
 //        for(int i = 6; i < 8; i++){
@@ -40,7 +61,13 @@ public class MainActivity extends AppCompatActivity {
 //        }
 
 
-        LoadData();
+        LoadDataUser();
+        LoadDataQuestion();
+        Toast.makeText(this, questions.size()+"", Toast.LENGTH_SHORT).show();
+        for(int i = 0; i < questions.size(); i++){
+            Log.d("qqqqq",questions.get(i).getId()+" "+questions.get(i).getQuestion()+" "+questions.get(i).getIdeaA()+" "+questions.get(i).getIdeaB()+" "+questions.get(i).getIdeaC()+" "+questions.get(i).getIdeaD()+" "+questions.get(i).getAnswer());
+
+        }
 
         edtName = findViewById(R.id.edtNameLogin);
         edtPass = findViewById(R.id.edtPassLogin);
@@ -70,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void LoadData(){
+    private void LoadDataUser(){
         Cursor dataUser = dataBase.QueryGetData("select * from users");
         users.clear();
         while(dataUser.moveToNext()){
@@ -79,6 +106,21 @@ public class MainActivity extends AppCompatActivity {
             String pass = dataUser.getString(2);
             User user = new User(id,name,pass);
             users.add(user);
+        }
+    }
+    public void LoadDataQuestion(){
+        Cursor data = dataBase.QueryGetData("select * from Questions");
+        questions.clear();
+        while(data.moveToNext()){
+            int id = data.getInt(0);
+            String question = data.getString(1);
+            String ideaA = data.getString(2);
+            String ideaB = data.getString(3);
+            String ideaC = data.getString(4);
+            String ideaD = data.getString(5);
+            int answer = data.getInt(6);
+            Question ques = new Question(id,question,ideaA,ideaB,ideaC,ideaD,answer);
+            questions.add(ques);
         }
     }
     private void SignUp(){
@@ -117,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 if(check==false){
                     dataBase.QuerySetData("insert into users(id,name,password) values (null,'"+name+"','"+pass+"')");
-                    LoadData();
+                    LoadDataUser();
                 }
                 if(count<users.size()){
                     Toast.makeText(MainActivity.this, "Đăng ký thành công", Toast.LENGTH_SHORT).show();
