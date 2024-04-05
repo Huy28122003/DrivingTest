@@ -1,6 +1,8 @@
 package com.example.drivingtest;
 
-public class Question {
+import java.io.Serializable;
+
+public class Question implements Serializable {
     private int id;
     private String question;
     private String ideaA;
@@ -73,5 +75,18 @@ public class Question {
 
     public void setAnswer(int answer) {
         this.answer = answer;
+    }
+
+    @Override
+    public String toString() {
+        return "Question{" +
+                "id=" + id +
+                ", question='" + question + '\'' +
+                ", ideaA='" + ideaA + '\'' +
+                ", ideaB='" + ideaB + '\'' +
+                ", ideaC='" + ideaC + '\'' +
+                ", ideaD='" + ideaD + '\'' +
+                ", answer=" + answer +
+                '}';
     }
 }

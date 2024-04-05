@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
                    if(users.get(i).getName().toString().equals(name) && users.get(i).getPassword().toString().equals(pass)){
                        Intent intent = new Intent(MainActivity.this,HomeActivity.class);
                        startActivity(intent);
-                       Toast.makeText(MainActivity.this, "Xin chào"+users.get(i).getName().toString(), Toast.LENGTH_SHORT).show();
+                      // Toast.makeText(MainActivity.this, "Xin chào"+users.get(i).getName().toString(), Toast.LENGTH_SHORT).show();
                    }
                    Log.d("aaa",users.get(i).getId()+" "+users.get(i).getName().toString()+" "+users.get(i).getPassword().toString());
                }
