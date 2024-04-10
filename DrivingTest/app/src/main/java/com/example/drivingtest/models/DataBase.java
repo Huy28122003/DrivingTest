@@ -1,4 +1,4 @@
-package com.example.drivingtest;
+package com.example.drivingtest.models;
 
 import android.content.Context;
 import android.database.Cursor;

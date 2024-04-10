@@ -1,21 +1,21 @@
 package com.example.drivingtest;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Toolbar;
+
+import com.example.drivingtest.models.Question;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,14 +28,9 @@ public class QuestionFragment extends Fragment {
     Question ques;
     private boolean isTimeUp = false;
 
-
-    private CountDownTimer countDownTimer;
-
     TextView question;
     RadioGroup rdoG;
     RadioButton idA,idB,idC,idD;
-
-    Button next, prev;
 
 
 
@@ -51,8 +46,6 @@ public class QuestionFragment extends Fragment {
         idB = view.findViewById(R.id.idea2);
         idC = view.findViewById(R.id.idea3);
         idD = view.findViewById(R.id.idea4);
-        next = view.findViewById(R.id.next);
-        prev = view.findViewById(R.id.previous);
 
 
         Bundle bundle = getArguments();
@@ -76,7 +69,6 @@ public class QuestionFragment extends Fragment {
 
                 // Get the text of the selected radio button
                 String selectedText = checkedRadioButton.getText().toString();
-
                 int count;
 
                 if(selectedText.equals(idA.getText())){
@@ -95,50 +87,35 @@ public class QuestionFragment extends Fragment {
                 
                 if(count == ques.getAnswer()){
                     Toast.makeText(getContext(), "ok", Toast.LENGTH_SHORT).show();
+                    rdoG.setEnabled(false);
+                    idA.setEnabled(false);
+                    idB.setEnabled(false);
+                    idC.setEnabled(false);
+                    idD.setEnabled(false);
+                    Log.i("scoreeeeeeeeeeee",ExamActivity.score+" ");
+                    MediaPlayer mediaPlayer = MediaPlayer.create(getContext(), R.raw.yes);
+                    mediaPlayer.start();
+                }
+                else{
+                    Toast.makeText(getContext(), "!ok", Toast.LENGTH_SHORT).show();
+                    rdoG.setEnabled(false);
+                    idA.setEnabled(false);
+                    idB.setEnabled(false);
+                    idC.setEnabled(false);
+                    idD.setEnabled(false);
+                    ExamActivity.score -= 1;
+                    Log.i("scoreeeeeeeeeeee",ExamActivity.score+" ");
+                    MediaPlayer mediaPlayer = MediaPlayer.create(getContext(), R.raw.no);
+                    mediaPlayer.start();
                 }
 
-
+                if (checkedId == -1) {
+                    Toast.makeText(getContext(), "No answer selected, point deducted!", Toast.LENGTH_SHORT).show();
+                    ExamActivity.score -= 1;
+                    Log.i("scoreeeeeeeeeeee", ExamActivity.score + " ");
+                }
             }
         });
         return view;
     }
-
-//    @Override
-//    public void onDestroyView() {
-//        super.onDestroyView();
-//        if (countDownTimer != null) {
-//            countDownTimer.cancel();
-//        }
-//    }
-
-    public void countDown(){
-        countDownTimer = new CountDownTimer(5000, 1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                // Update the UI with the remaining time
-
-                Toast.makeText(getContext(), millisUntilFinished / 1000+"", Toast.LENGTH_SHORT).show();            }
-
-            @Override
-            public void onFinish() {
-                isTimeUp = true;
-
-                // Navigate to the next fragment
-                ViewPager2 viewPager = (ViewPager2) getActivity().findViewById(R.id.viewpager);
-                viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
-            }
-        };
-
-        // Start the countdown timer
-        countDownTimer.start();
-    }
-
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        if (isTimeUp) {
-//            ViewPager2 viewPager = (ViewPager2) getActivity().findViewById(R.id.viewpager);
-//            viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
-//        }
-//    }
 }

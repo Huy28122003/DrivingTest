@@ -1,6 +1,6 @@
 package com.example.drivingtest.services;
 
-import com.example.drivingtest.Question;
+import com.example.drivingtest.models.Question;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 

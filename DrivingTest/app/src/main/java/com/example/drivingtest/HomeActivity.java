@@ -2,39 +2,31 @@ package com.example.drivingtest;
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
-import com.example.drivingtest.services.ApiService;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import com.example.drivingtest.models.DataBase;
 
 public class HomeActivity extends AppCompatActivity {
 //    private ArrayList<Question> questions = new ArrayList<>();
 //    DataBase dataBase = new DataBase(this,null,null,1);
 
-    Button btnStart;
-    TextView txtRs;
+    Button btnStart,btnTrain,btnHistory,btnMore;
+    TextView txtRs,txtRsMax;
+
+    DataBase dataBase;
+
+    int userId;
 
     ActivityResultLauncher<Intent> launcher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -45,6 +37,7 @@ public class HomeActivity extends AppCompatActivity {
                         Intent data = o.getData();
                         int rs = data.getIntExtra("result",0);
                         txtRs.setText("Result: "+rs);
+                        dataBase.QuerySetData("insert into results(user_id,result) values("+userId+","+rs+")");
                     }
                 }
             }
@@ -53,13 +46,47 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        btnStart = (Button) findViewById(R.id.start);
-        txtRs = (TextView) findViewById(R.id.txtRs);
+
+        map();
+
+        // Gọi database
+        dataBase = new DataBase(this, "user.sqlite", null, 1);
+
+        // Lấy dữ liệu từ người dùng đăng nhập
+        getUserData();
+
+        showResult();
+
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(HomeActivity.this,ExamActivity.class);
                 launcher.launch(intent);
+            }
+        });
+        btnTrain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomeActivity.this,TrainingActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        btnHistory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomeActivity.this,HistoryActivity.class);
+                intent.putExtra("user_id",userId);
+                startActivity(intent);
+            }
+        });
+        btnMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse("https://onthilaixe.vn/"));
+                startActivity(intent);
             }
         });
 //        getQuestions();
@@ -89,26 +116,44 @@ public class HomeActivity extends AppCompatActivity {
 //            Log.d("cccc", questions.get(i).getId()+" "+questions.get(i).getQuestion()+" "+questions.get(i).getIdeaA()+" "+questions.get(i).getIdeaB()+" "+questions.get(i).getIdeaC()+" "+questions.get(i).getIdeaD()+" "+questions.get(i).getAnswer());
 //        }
 
-
     }
 
-//
-//    private void getQuestions() {
-//        ApiService.apiService.questionCall().enqueue(new Callback<List<Question>>() {
-//            @Override
-//            public void onResponse(Call<List<Question>> call, Response<List<Question>> response) {
-//                List<Question> questions = response.body();
-//                for(Question question : questions){
-//                    Log.i("aaaaaaaaaaaa",question.toString());
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<List<Question>> call, Throwable t) {
-//                Toast.makeText(HomeActivity.this, "!ok", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//    }
+    private void showResult() {
+        // Tạo bảng lưu kết quả
+        String createTBUser = "create table if not exists results (id integer primary key autoincrement, user_id integer REFERENCES users(id), result integer)";
+        dataBase.QuerySetData(createTBUser);
+
+        // Lấy dữ liệu từ bảng lưu kết quả
+        String getDataUser = "select * from results where user_id = "+userId;
+        Cursor cursor = dataBase.QueryGetData(getDataUser);
+        int maxRs = 0;
+        while (cursor.moveToNext()) {
+            int result = cursor.getInt(2);
+            if(result>maxRs){
+                maxRs = result;
+            }
+        }
+        txtRsMax.setText("Tốt nhất: "+maxRs);
+    }
+
+    private void getUserData() {
+        Intent intent = this.getIntent();
+        userId = intent.getIntExtra("user_id",0);
+        Toast.makeText(this, userId+"", Toast.LENGTH_SHORT).show();
+    }
+
+
+    private void map(){
+        btnStart = (Button) findViewById(R.id.start);
+        txtRs = (TextView) findViewById(R.id.txtRs);
+        txtRsMax = (TextView) findViewById(R.id.txtRsMax);
+        btnTrain = (Button) findViewById(R.id.btnTrain);
+        btnHistory = (Button) findViewById(R.id.btnHistory);
+        btnMore = (Button) findViewById(R.id.btnMore);
+    }
+
+
+
 
 
 }

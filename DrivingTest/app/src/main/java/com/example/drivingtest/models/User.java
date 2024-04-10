@@ -1,4 +1,4 @@
-package com.example.drivingtest;
+package com.example.drivingtest.models;
 
 public class User {
     private int id;

@@ -1,5 +1,9 @@
 package com.example.drivingtest;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Dialog;
@@ -10,11 +14,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import java.lang.reflect.Array;
+import com.example.drivingtest.models.DataBase;
+import com.example.drivingtest.models.Question;
+import com.example.drivingtest.models.User;
+
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -22,12 +29,16 @@ public class MainActivity extends AppCompatActivity {
     Button btnLogin,btnSignUp;
     DataBase dataBase;
 
+    TextView txtLostPass;
+
     private ArrayList<User> users;
     private ArrayList<Question> questions;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         users = new ArrayList<>();
         questions = new ArrayList<>();
@@ -40,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
         String createTableQues = "create table if not exists questions (id integer primary key autoincrement, question varchar(200) not null, ideaA varchar(200) not null, ideaB varchar(200) not null, ideaC varchar(200) not null, ideaD varchar(200) not null, answer integer not null)";
         dataBase.QuerySetData(createTableQues);
 
+//        String del = "delete from results where id = 1";
+//        dataBase.QuerySetData(del);
 //        String insertData = "insert into questions values " +
 //                "(null, 'Biển báo nào dưới đây chỉ dẫn cho người lái xe phải giảm tốc độ?', 'Biển báo giới hạn tốc độ', 'Biển báo cấm vượt', 'Biển báo nguy hiểm', 'Biển báo chỉ dẫn hướng', 1)," +
 //                "(null, 'Khi lái xe trên đường cao tốc, người lái xe phải giữ khoảng cách an toàn với xe phía trước ít nhất là bao nhiêu mét?', '50 mét', '100 mét', '150 mét', '200 mét', 2)," +
@@ -62,29 +75,36 @@ public class MainActivity extends AppCompatActivity {
 
 
         LoadDataUser();
-        LoadDataQuestion();
-        Toast.makeText(this, questions.size()+"", Toast.LENGTH_SHORT).show();
-        for(int i = 0; i < questions.size(); i++){
-            Log.d("qqqqq",questions.get(i).getId()+" "+questions.get(i).getQuestion()+" "+questions.get(i).getIdeaA()+" "+questions.get(i).getIdeaB()+" "+questions.get(i).getIdeaC()+" "+questions.get(i).getIdeaD()+" "+questions.get(i).getAnswer());
-
-        }
+//        LoadDataQuestion();
+//        Toast.makeText(this, questions.size()+"", Toast.LENGTH_SHORT).show();
+//        for(int i = 0; i < questions.size(); i++){
+//            Log.d("qqqqq",questions.get(i).getId()+" "+questions.get(i).getQuestion()+" "+questions.get(i).getIdeaA()+" "+questions.get(i).getIdeaB()+" "+questions.get(i).getIdeaC()+" "+questions.get(i).getIdeaD()+" "+questions.get(i).getAnswer());
+//
+//        }
 
         edtName = findViewById(R.id.edtNameLogin);
         edtPass = findViewById(R.id.edtPassLogin);
         btnLogin = findViewById(R.id.btnLogin);
         btnSignUp = findViewById(R.id.btnSignUp);
+        txtLostPass = findViewById(R.id.txtLostPass);
+
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                boolean check = false;
                String name = edtName.getText().toString();
                String pass = edtPass.getText().toString();
                for(int i = 0; i < users.size(); i++){
                    if(users.get(i).getName().toString().equals(name) && users.get(i).getPassword().toString().equals(pass)){
+                       check = true;
                        Intent intent = new Intent(MainActivity.this,HomeActivity.class);
+                       intent.putExtra("user_id",users.get(i).getId());
                        startActivity(intent);
                       // Toast.makeText(MainActivity.this, "Xin chào"+users.get(i).getName().toString(), Toast.LENGTH_SHORT).show();
                    }
-                   Log.d("aaa",users.get(i).getId()+" "+users.get(i).getName().toString()+" "+users.get(i).getPassword().toString());
+               }
+               if(check == false){
+                   Toast.makeText(MainActivity.this, "Tài khoản hoặc mật khẩu không đúng", Toast.LENGTH_SHORT).show();
                }
             }
         });
@@ -93,6 +113,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 SignUp();
+            }
+        });
+        txtLostPass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, LostPassActivity.class);
+                startActivity(intent);
             }
         });
     }
@@ -108,21 +135,21 @@ public class MainActivity extends AppCompatActivity {
             users.add(user);
         }
     }
-    public void LoadDataQuestion(){
-        Cursor data = dataBase.QueryGetData("select * from Questions");
-        questions.clear();
-        while(data.moveToNext()){
-            int id = data.getInt(0);
-            String question = data.getString(1);
-            String ideaA = data.getString(2);
-            String ideaB = data.getString(3);
-            String ideaC = data.getString(4);
-            String ideaD = data.getString(5);
-            int answer = data.getInt(6);
-            Question ques = new Question(id,question,ideaA,ideaB,ideaC,ideaD,answer);
-            questions.add(ques);
-        }
-    }
+//    public void LoadDataQuestion(){
+//        Cursor data = dataBase.QueryGetData("select * from Questions");
+//        questions.clear();
+//        while(data.moveToNext()){
+//            int id = data.getInt(0);
+//            String question = data.getString(1);
+//            String ideaA = data.getString(2);
+//            String ideaB = data.getString(3);
+//            String ideaC = data.getString(4);
+//            String ideaD = data.getString(5);
+//            int answer = data.getInt(6);
+//            Question ques = new Question(id,question,ideaA,ideaB,ideaC,ideaD,answer);
+//            questions.add(ques);
+//        }
+//    }
     private void SignUp(){
         Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.form_sign_up);
