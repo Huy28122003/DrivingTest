@@ -142,7 +142,6 @@ public class HomeActivity extends AppCompatActivity {
         Toast.makeText(this, userId+"", Toast.LENGTH_SHORT).show();
     }
 
-
     private void map(){
         btnStart = (Button) findViewById(R.id.start);
         txtRs = (TextView) findViewById(R.id.txtRs);

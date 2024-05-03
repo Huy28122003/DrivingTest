@@ -51,8 +51,6 @@ public class MainActivity extends AppCompatActivity {
         String createTableQues = "create table if not exists questions (id integer primary key autoincrement, question varchar(200) not null, ideaA varchar(200) not null, ideaB varchar(200) not null, ideaC varchar(200) not null, ideaD varchar(200) not null, answer integer not null)";
         dataBase.QuerySetData(createTableQues);
 
-//        String del = "delete from results where id = 1";
-//        dataBase.QuerySetData(del);
 //        String insertData = "insert into questions values " +
 //                "(null, 'Biển báo nào dưới đây chỉ dẫn cho người lái xe phải giảm tốc độ?', 'Biển báo giới hạn tốc độ', 'Biển báo cấm vượt', 'Biển báo nguy hiểm', 'Biển báo chỉ dẫn hướng', 1)," +
 //                "(null, 'Khi lái xe trên đường cao tốc, người lái xe phải giữ khoảng cách an toàn với xe phía trước ít nhất là bao nhiêu mét?', '50 mét', '100 mét', '150 mét', '200 mét', 2)," +
